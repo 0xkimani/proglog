@@ -3,7 +3,37 @@ syntax = "proto3";
 package log.v1;
 option go_package = "github.com/0xkimani/proglog/api/log_v1";
 
+// Record represents a single log entry with a value and its offset position.
 message Record {
   bytes value = 1;
   uint64 offset = 2;
+}
+
+// log service exposes RPC methods for producing and consumming log records
+// Produce appends a single record to the log 
+// Consume reads a single record at the given offset
+// ProduceStream accepts a stream of records and appends them to the log
+service log {
+  rpc Produce(ProduceRequest) returns (ProduceResponse) {}
+  rpc Consume(ConsumeRequest) returns (ConsumeResponse) {}
+  rpc ConsumeStream(ConsumeRequest) returns (stream ConsumeResponse) {}
+  rpc ProduceStream(stream ProduceRequest) returns (stream ProduceResponse) {}
+}
+
+message ProduceRequest {
+  Record record = 1;
+}
+
+// offset is the position the record was written to in the log
+message ProduceResponse {
+  uint64 offset = 1;
+}
+
+// offset is the position to read from in the log
+message ConsumeRequest {
+  uint64 offset = 1;
+}
+
+message ConsumeResponse {
+  Record record = 2;
 }

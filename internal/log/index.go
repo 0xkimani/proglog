@@ -53,7 +53,6 @@ func newIndex(f *os.File, c Config) (*index, error) {
 	); err != nil {
 		return nil, err
 	}
-
 	return idx, nil
 }
 
